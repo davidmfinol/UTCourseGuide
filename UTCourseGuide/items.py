@@ -6,6 +6,11 @@
 from scrapy.item import Item, Field
 
 class UtcourseguideItem(Item):
-    # define the fields for your item here like:
-    # name = Field()
+    instructor = Field()
+    course = Field()
+    organization = Field()
+    college = Field()
+    semester = Field()
+    formsDistributed = Field()
+    formsReturned = Field()
     pass
