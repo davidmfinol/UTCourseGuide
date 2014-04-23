@@ -71,9 +71,12 @@ class UtcourseguideSpider(Spider):
         item = UtcourseguideItem()
         courseSurveyMeta = selector.xpath(self.field_xpaths['courseSurveyMeta'])
         item['instructor'] = courseSurveyMeta[0].extract()
-        item['course'] = courseSurveyMeta[0].extract()
-        item['organization'] = courseSurveyMeta[0].extract()
-        item['college'] = courseSurveyMeta[0].extract()
+        item['course'] = courseSurveyMeta[1].extract()
+        item['organization'] = courseSurveyMeta[2].extract()
+        item['college'] = courseSurveyMeta[3].extract()
+        item['semester'] = courseSurveyMeta[4].extract()
+        item['formsDistributed'] = courseSurveyMeta[5].extract()
+        item['formsReturned'] = courseSurveyMeta[6].extract()
         
         # Clean-up
         self.browser.close()
