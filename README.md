@@ -16,8 +16,8 @@ https://pypi.python.org/pypi/selenium
 Usage
 -------------
 Run the webcrawler with the following command:
-scrapy crawl utcourseguide -a username=<youreid> -a password=<yourschoolpassword>
+scrapy crawl utcourseguide -a username=youreid -a password=yourschoolpassword
 
 To have the data be stored as json, add the follwing flags: -o items.json -t json
 The full command would then be:
-scrapy crawl utcourseguide -a username=<youreid> -a password=<yourschoolpassword> -o items.json -t json
+scrapy crawl utcourseguide -a username=youreid -a password=yourschoolpassword -o items.json -t json
