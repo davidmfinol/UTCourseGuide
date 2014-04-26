@@ -30,7 +30,10 @@ class UtcourseguideSpider(Spider):
     
     # Xpaths for the fields that we will be mining with scrapy
     field_xpaths = {
-        'courseSurveyMeta' : ".//*[@id='service_content']/fieldset/div"
+        'courseSurveyMeta' : ".//*[@id='service_content']/fieldset/div",
+        'courseSpecific' : ".//*[@id='service_content']/table[1]",
+        'courseOverall' : ".//*[@id='service_content']/table[2]",
+        'courseWorkload' : ".//*[@id='service_content']/table[3]"
     }
     
     
@@ -67,18 +70,89 @@ class UtcourseguideSpider(Spider):
         resp_for_scrapy = TextResponse('none', 200, {}, html_str, [], None)
         selector = Selector(resp_for_scrapy)
         
-        # Use scrapy to get the course survey meta-data
+        # Set up scrapy to parse the page
+        items = []
         item = UtcourseguideItem()
         courseSurveyMeta = selector.xpath(self.field_xpaths['courseSurveyMeta'])
-        item['instructor'] = courseSurveyMeta[0].extract()
-        item['course'] = courseSurveyMeta[1].extract()
-        item['organization'] = courseSurveyMeta[2].extract()
-        item['college'] = courseSurveyMeta[3].extract()
-        item['semester'] = courseSurveyMeta[4].extract()
-        item['formsDistributed'] = courseSurveyMeta[5].extract()
-        item['formsReturned'] = courseSurveyMeta[6].extract()
+        courseSpecific = selector.xpath(self.field_xpaths['courseSpecific'])
+        courseOverall = selector.xpath(self.field_xpaths['courseOverall'])
+        courseWorkload = selector.xpath(self.field_xpaths['courseWorkload'])
+        
+        # Course survey meta-data
+        item['instructor'] = courseSurveyMeta[0].xpath('text()').extract()
+        item['course'] = courseSurveyMeta[1].xpath('text()').extract()
+        item['organization'] = courseSurveyMeta[2].xpath('text()').extract()
+        item['college'] = courseSurveyMeta[3].xpath('text()').extract()
+        item['semester'] = courseSurveyMeta[4].xpath('text()').extract()
+        item['formsDistributed'] = courseSurveyMeta[5].xpath('text()').extract()
+        item['formsReturned'] = courseSurveyMeta[6].xpath('text()').extract()
+        
+        # The course was well organized.
+        wellOrganized = []
+        xpath = courseSpecific.xpath('tbody/tr[2]/td')
+        for x in range(2, 11):
+            wellOrganized.append(xpath[x].xpath('text()').extract())
+        item['wellOrganized'] = wellOrganized
+        
+        # The instructor communicated information effectively.
+        commmunicatedEffectively = []
+        xpath = courseSpecific.xpath('tbody/tr[3]/td')
+        for x in range(2, 11):
+            commmunicatedEffectively.append(xpath[x].xpath('text()').extract())
+        item['commmunicatedEffectively'] = commmunicatedEffectively
+        
+        # The instructor showed interest in the progress of students.
+        showedInterest = []
+        xpath = courseSpecific.xpath('tbody/tr[4]/td')
+        for x in range(2, 11):
+            showedInterest.append(xpath[x].xpath('text()').extract())
+        item['showedInterest'] = showedInterest
+        
+        # The tests/assignments were usually graded and returned promptly.
+        gradedPromptly = []
+        xpath = courseSpecific.xpath('tbody/tr[5]/td')
+        for x in range(2, 11):
+            gradedPromptly.append(xpath[x].xpath('text()').extract())
+        item['gradedPromptly'] = gradedPromptly
+        
+        # The instructor made me feel free to ask questions, disagree, and express my ideas.
+        freeToDisagree = []
+        xpath = courseSpecific.xpath('tbody/tr[6]/td')
+        for x in range(2, 11):
+            freeToDisagree.append(xpath[x].xpath('text()').extract())
+        item['freeToDisagree'] = freeToDisagree
+        
+        # At this point in time, I feel that this course will be (or has already been) of value to me.
+        courseOfValue = []
+        xpath = courseSpecific.xpath('tbody/tr[7]/td')
+        for x in range(2, 11):
+            courseOfValue.append(xpath[x].xpath('text()').extract())
+        item['courseOfValue'] = courseOfValue
+        
+        # Overall, this instructor was
+        instructorWas = []
+        xpath = courseOverall.xpath('tbody/tr[2]/td')
+        for x in range(2, 11):
+            instructorWas.append(xpath[x].xpath('text()').extract())
+        item['instructorWas'] = instructorWas
+        
+        # Overall, this course was
+        courseWas = []
+        xpath = courseOverall.xpath('tbody/tr[3]/td')
+        for x in range(2, 11):
+            courseWas.append(xpath[x].xpath('text()').extract())
+        item['courseWas'] = courseWas
+        
+        # In my opinion, the workload in this course was
+        workloadWas = []
+        xpath = courseWorkload.xpath('tbody/tr[2]/td')
+        for x in range(2, 11):
+            workloadWas.append(xpath[x].xpath('text()').extract())
+        item['workloadWas'] = workloadWas
         
         # Clean-up
+        items.append(item)
         self.browser.close()
+        return items
         
         
