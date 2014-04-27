@@ -18,6 +18,6 @@ Usage
 Run the webcrawler with the following command: <br>
 scrapy crawl utcourseguide -a username=youreid -a password=yourschoolpassword
 
-To have the data be stored as json, add the follwing flags: -o items.json -t json
+To have the data be stored as json, add the follwing flags: -o items.json -t json <br>
 The full command would then be: <br>
 scrapy crawl utcourseguide -a username=youreid -a password=yourschoolpassword -o items.json -t json
